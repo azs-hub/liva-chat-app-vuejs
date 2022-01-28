@@ -1,0 +1,15 @@
+.chat-live input {
+	border: 1px solid #ccc;
+  padding: 8px 13px;
+  line-height: normal;
+  color: #333;
+}
+.chat-live input::placeholder {
+  color: #aaa;
+  text-transform: uppercase;
+}
+.chat-live input[type=submit] {
+  color: #eee;
+  background: #333;
+  border-color:  #333;
+}
