@@ -1,11 +1,11 @@
 
 <section class="chat-live">
-  <div v-if="chat === null">
+  <div v-if="chat.username === null">
     <h1>Any question ?</h1>
     <p>Fell free to contact our support</p>
     <form @submit.prevent="enterTheChat">
       <div class="form-group row">
-        <input type="text" class="form-control col-9" v-model="username"
+        <input type="text" class="form-control col-9" v-model="chat.username"
         placeholder="Enter username here">
         <input type="submit" value="Join" class="btn btn-sm btn-info ml-1">
       </div>

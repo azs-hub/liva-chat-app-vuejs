@@ -12,7 +12,12 @@ export default {
       messageList: [],
       initOpen: false,
       toggledOpen: false,
-      chat: null
+      chat: {
+        username: null,
+        id: null,
+        start_date: null,
+        status: null,
+      }
     }
   },
   computed: {
@@ -36,12 +41,12 @@ export default {
   methods: {
     async enterTheChat() {
       console.log('enter the chat');
-      try {
-        await this.ConnectUser({username: this.username});
-      } catch (err) {
-        console.log(err);
-        this.error = err.error
-      }
+      // try {
+      //   await this.ConnectUser({username: this.username});
+      // } catch (err) {
+      //   console.log(err);
+      //   this.error = err.error
+      // }
     },
     handleMessageReceived(message) {
       this.messageList.push(message)
