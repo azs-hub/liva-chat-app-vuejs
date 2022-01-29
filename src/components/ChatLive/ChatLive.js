@@ -1,4 +1,6 @@
+import { mapGetters, mapActions } from "vuex"
 import {Chat} from 'vue-chat-widget'
+
 // import incomingMessageSound from '../assets/notification.mp3' 
 
 export default {
@@ -21,7 +23,7 @@ export default {
     }
   },
   computed: {
-
+    ...mapGetters({Chat: "StateChatRoom"}),
   },
   mounted () {
     this.messageList.push({ body: 'Welcome to the chat, I\'m David!', author: 'them' })
@@ -39,14 +41,15 @@ export default {
     }
   },
   methods: {
-    async enterTheChat() {
-      console.log('enter the chat');
-      // try {
-      //   await this.ConnectUser({username: this.username});
-      // } catch (err) {
-      //   console.log(err);
-      //   this.error = err.error
-      // }
+    ...mapActions(["ConnectUser"]),
+    async createChat() {
+      console.log('enter the chat', this.chat.username);
+      try {
+        await this.ConnectUser(this.chat.username);
+      } catch (err) {
+        console.log(err);
+        this.error = err.error
+      }
     },
     handleMessageReceived(message) {
       this.messageList.push(message)
