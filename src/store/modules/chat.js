@@ -1,4 +1,5 @@
 import { CreateChatRoom } from '@/api/chat.api';
+import { PostMessage } from '@/api/message.api';
 
 // default data value
 const state = {
@@ -25,8 +26,24 @@ const actions = {
 
 	async ConnectUser({commit}, name) {
 		try {
-      var newChat = await CreateChatRoom({username: name});
+      const newChat = await CreateChatRoom({username: name});
       commit('setChat', newChat.data);
+      commit('setSession', newChat.data.token);
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+	},
+	async SendMessage({state, commit}, msg) {
+		try {
+			const message = { 
+				content: msg,
+				sendby: 0,
+				chat_id: state.chat.id
+			};
+      const newMsg = await PostMessage(message);
+      console.log('SendMessage', newMsg);
+      commit('addMessage', newMsg.data);
     } catch (err) {
       console.log(err);
       return err;
@@ -39,7 +56,13 @@ const actions = {
 const mutations = {
 	setChat(state, chat){
 		state.chat = chat
-		state.session = chat.token
+	},
+	setSession(state, token){
+		state.session = token
+	},
+	addMessage(state, msg){
+		console.log('addMessage', msg);
+		state.messages.push(msg)
 	}
 
 };

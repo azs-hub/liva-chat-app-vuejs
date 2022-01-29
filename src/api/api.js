@@ -24,20 +24,3 @@ axios.interceptors.response.use(undefined, function (error) {
   // request is rejected and will direct logic to the catch() method
   return Promise.reject(error.response.data)
 });
-
-axios.interceptors.request.use(
-  (config) => {
-    let token = localStorage.getItem('authtoken');
-    console.log('axios.interceptors.request');
-    console.log(localStorage, token);
-    // if (token) {
-    //   config.headers['Authorization'] = `Bearer ${ token }`;
-    // }
-
-    return config;
-  }, 
-
-  (error) => {
-    return Promise.reject(error);
-  }
-);

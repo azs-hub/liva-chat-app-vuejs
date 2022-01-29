@@ -45,7 +45,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["ConnectUser"]),
+    ...mapActions(["ConnectUser", "SendMessage"]),
     async createChat() {
       console.log('enter the chat', this.chat.username);
       try {
@@ -55,7 +55,14 @@ export default {
         this.error = err.error
       }
     },
-    handleMessageReceived(message) {
+    async handleMessageReceived(message) {
+      console.log('handleMessageReceived', message);
+      try {
+        await this.SendMessage(message.body);
+      } catch (err) {
+        console.log(err);
+        this.error = err.error
+      }
       this.messageList.push(message)
     },
     // Receive message from them (handled by you with your backend)
