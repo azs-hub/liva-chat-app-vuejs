@@ -1,5 +1,5 @@
 import { CreateChatRoom } from '@/api/chat.api';
-import { PostMessage } from '@/api/message.api';
+import { PostMessage, GetChatMessages } from '@/api/message.api';
 
 // default data value
 const state = {
@@ -16,8 +16,8 @@ const state = {
 
 // Get localdata
 const getters = {
-	StateChatRoom: state => state.chat,
-	StateMessagesRoom: state => state.messages,
+	StateChat: state => state.chat,
+	StateMessages: state => state.messages,
 	StateSession: state => state.session,
 };
 
@@ -42,8 +42,16 @@ const actions = {
 				chat_id: state.chat.id
 			};
       const newMsg = await PostMessage(message);
-      console.log('SendMessage', newMsg);
       commit('addMessage', newMsg.data);
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+	},
+	async GetAllMessages({state, commit}) {
+		try {
+      const allMsg = await GetChatMessages(state.chat.id);
+      commit('setMessage', allMsg.data);
     } catch (err) {
       console.log(err);
       return err;
@@ -60,9 +68,14 @@ const mutations = {
 	setSession(state, token){
 		state.session = token
 	},
+	setMessage(state, allMsg){
+		state.messages = new Array();
+		allMsg.forEach(function (msg) {
+			state.messages.push({body: msg.content, author: (msg.sendby == 0) ? 'you' : 'them'})
+		})
+	},
 	addMessage(state, msg){
-		console.log('addMessage', msg);
-		state.messages.push(msg)
+		state.messages.push({body: msg.content, author: (msg.sendby == 0) ? 'you' : 'them'})
 	}
 
 };

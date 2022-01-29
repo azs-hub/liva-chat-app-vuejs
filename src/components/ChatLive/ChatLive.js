@@ -23,14 +23,19 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({Chat: "StateChatRoom"})
+    ...mapGetters({Chat: "StateChat", Messages: "StateMessages"}),
   },
   mounted () {
-    this.messageList.push({ body: 'Welcome to the chat, I\'m David!', author: 'them' })
+    this.messageList = this.Messages;
     this.chat = this.Chat;
+    if (this.chat.id !== null) {
+      this.loadMessage();
+      this.initOpen = true;
+    }
   },
   watch: {
     messageList: function(newList) {
+      console.log('ChatLive - Watch: messageList set newVal', newList);
       const nextMessage = newList[newList.length - 1]
       const isIncoming = (nextMessage || {}).author !== 'you'
       if (isIncoming && this.toggledOpen) {
@@ -45,7 +50,15 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["ConnectUser", "SendMessage"]),
+    ...mapActions(["ConnectUser", "SendMessage", "GetAllMessages"]),
+    async loadMessage() {
+      try {
+        await this.GetAllMessages();
+      } catch (err) {
+        console.log(err);
+        this.error = err.error
+      }
+    },
     async createChat() {
       console.log('enter the chat', this.chat.username);
       try {
