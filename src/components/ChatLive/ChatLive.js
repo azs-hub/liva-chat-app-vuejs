@@ -23,10 +23,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({Chat: "StateChatRoom"}),
+    ...mapGetters({Chat: "StateChatRoom"})
   },
   mounted () {
     this.messageList.push({ body: 'Welcome to the chat, I\'m David!', author: 'them' })
+    this.chat = this.Chat;
   },
   watch: {
     messageList: function(newList) {
@@ -35,6 +36,9 @@ export default {
       if (isIncoming && this.toggledOpen) {
         this.handleMessageResponseSound()
       }
+    },
+    chat: function(newVal) {
+      console.log(this.chat , 'vs', newVal);
     },
     initOpen: function(newVal) {
       console.log(this.initOpen , 'vs', newVal);
