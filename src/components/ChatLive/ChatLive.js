@@ -44,9 +44,6 @@ export default {
     },
     chat: function(newVal) {
       console.log(this.chat , 'vs', newVal);
-    },
-    initOpen: function(newVal) {
-      console.log(this.initOpen , 'vs', newVal);
     }
   },
   methods: {
@@ -60,7 +57,6 @@ export default {
       }
     },
     async createChat() {
-      console.log('enter the chat', this.chat.username);
       try {
         await this.ConnectUser(this.chat.username);
       } catch (err) {
@@ -69,7 +65,6 @@ export default {
       }
     },
     async handleMessageReceived(message) {
-      console.log('handleMessageReceived', message);
       try {
         await this.SendMessage(message.body);
       } catch (err) {
