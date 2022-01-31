@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import About from '../views/About.vue'
+import AdminPage from '@/views/Admin.vue'
+import AdminLogin from '../views/admin/AdminLogin/index.vue'
+import AdminDashboard from '../views/admin/AdminDashboard/index.vue'
 
 Vue.use(VueRouter)
 
@@ -13,15 +17,48 @@ const routes = [
   {
     path: '/about',
     name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
+    component: About
+    
+  },
+  // {
+  //   path: '/admin/login',
+  //   name: 'adminLogin',
+  //   component: AdminLogin
+  // },
+  // {
+  //   path: '/admin/dashboard',
+  //   name: 'adminDashboard',
+  //   component: AdminDashboard
+  // },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: AdminPage,
+    children: [
+      { path: 'login', component: AdminLogin, name: 'adminLogin' },
+      { path: 'dashboard', component: AdminDashboard, name: 'adminDashboard', }
+    ],
+  },
 ]
 
 const router = new VueRouter({
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  const publicPages = ['/admin/login', '/'];
+  const authRequired = !publicPages.includes(to.path);
+  const loggedIn = localStorage.getItem('user');
+
+  // trying to access a restricted page + not logged in
+  // redirect to login page
+  if (authRequired && !loggedIn) {
+    next('/admin/login');
+  } else {
+    next();
+  }
+  next();
+})
+
 
 export default router
