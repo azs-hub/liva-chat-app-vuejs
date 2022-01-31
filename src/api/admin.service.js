@@ -1,11 +1,9 @@
 import axios from 'axios';
-import authHeader from './auth-header';
-
-const API_URL = 'http://localhost:8080/api/test/';
+import { adminHeader } from './authHeader';
 
 class AdminService {
-  getListChat() {
-    // return axios.get(API_URL + 'all');
+  getChatList() {
+    return axios.get('/chats', {headers: adminHeader() });
   }
 
   getChat() {

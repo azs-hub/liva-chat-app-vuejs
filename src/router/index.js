@@ -20,16 +20,6 @@ const routes = [
     component: About
     
   },
-  // {
-  //   path: '/admin/login',
-  //   name: 'adminLogin',
-  //   component: AdminLogin
-  // },
-  // {
-  //   path: '/admin/dashboard',
-  //   name: 'adminDashboard',
-  //   component: AdminDashboard
-  // },
   {
     path: '/admin',
     name: 'Admin',

@@ -35,7 +35,6 @@ export default {
   },
   watch: {
     messageList: function(newList) {
-      console.log('ChatLive - Watch: messageList set newVal', newList);
       const nextMessage = newList[newList.length - 1]
       const isIncoming = (nextMessage || {}).author !== 'you'
       if (isIncoming && this.toggledOpen) {
