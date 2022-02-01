@@ -1,8 +1,35 @@
 
 <section class="admin-dashboard">
-  <h1>Dashboard</h1>
   <div>
-    <b-table hover :items="chatList" :fields="fields"></b-table>
+    <b-table sticky-header hover
+      :items="chatList" 
+      :fields="fields"
+      ref="selectableTable"
+      select-mode="single"
+      selectable
+      @row-selected="myRowClickHandler">
+
+      <template #cell(username)="data">
+        {{ data.value }}
+      </template>
+
+       <template #cell(start_date)="data">
+        <b>{{ data.value | formatDate }}</b>
+      </template>
+
+       <template #cell(status)="data">
+        <b-icon-chat-fill 
+          :id="'tooltip-target-' + data.index"
+          v-bind:class="{ 'text-warning': data.value === 'waiting', 'text-success': data.value === 'defined', 'text-danger': data.value === 'closed' }">
+        </b-icon-chat-fill>
+        <b-tooltip :target="'tooltip-target-' + data.index" triggers="hover">
+          <b>{{ data.value }}</b>
+        </b-tooltip>
+
+      </template>
+    </b-table>
+
+    <ChatAdmin v-if="selectedChat" chatId="selectedChat" />
   </div>
 </section>
 

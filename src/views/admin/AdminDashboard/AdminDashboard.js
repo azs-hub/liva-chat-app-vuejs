@@ -1,26 +1,31 @@
 import AdminService from '@/api/admin.service';
+import ChatAdmin from '@/components/ChatAdmin/index.vue'
 
 export default {
   name: 'admin-dashboard',
-  components: {},
+  components: {
+    ChatAdmin
+  },
   props: [],
   data () {
     return {
-      fields: ['username', 'start_date', 'status'],
-      chatList: []
+      fields: [
+        'username',
+        { key: 'start_date', label: 'Date' },
+        'status'
+      ],
+      chatList: [],
+      selectedChat: null
     }
   },
   computed: {
 
   },
   mounted () {
-    console.log('mounted');
   },
   created () {
-    console.log('created');
     AdminService.getChatList().then(
       chats => {
-        console.log('chats:', chats);
         this.chatList = chats.data;
       },
       error => {
@@ -28,7 +33,11 @@ export default {
       });
   },
   methods: {
-
+    myRowClickHandler(record) {
+      this.selectedChat = record[0].id;
+      console.log(record);
+      this.$router.push('/admin/chat/' + record[0].id);
+    }
   }
 }
 

@@ -1,8 +1,6 @@
 import { mapGetters, mapActions } from "vuex"
 import {Chat} from 'vue-chat-widget'
 
-// import incomingMessageSound from '../assets/notification.mp3' 
-
 export default {
   name: 'chat-live',
   components: {

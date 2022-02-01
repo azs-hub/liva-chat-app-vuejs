@@ -8,6 +8,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import router from './router'
 import store from './store'
 import "./api/api.js";
+import "./utils/filers.js";
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
