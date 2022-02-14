@@ -1,6 +1,10 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
+    <b-row>
+      <b-col>
+        <img alt="Vue logo" src="../assets/logo.png">
+      </b-col>
+    </b-row>
     <HelloWorld msg="Welcome to Your Vue.js App"/>
     <ChatLive />
   </div>

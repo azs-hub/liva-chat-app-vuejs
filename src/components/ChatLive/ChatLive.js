@@ -9,35 +9,37 @@ export default {
   props: [],
   data () {
     return {
-      messageList: [],
+      // messageList: [],
       initOpen: false,
       toggledOpen: false,
-      chat: {
-        username: null,
-        id: null,
-        start_date: null,
-        status: null,
-      }
+      // chat: {
+      //   username: null,
+      //   id: null,
+      //   start_date: null,
+      //   status: null,
+      // }
     }
   },
   computed: {
-    ...mapGetters({Chat: "StateChat", Messages: "StateMessages"}),
+    ...mapGetters({chat: "StateChat", messageList: "StateMessages"}),
   },
   mounted () {
-    this.messageList = this.Messages;
-    this.chat = this.Chat;
+    // this.messageList = this.Messages;
+    // this.messageList = this.$store.getters['StateMessages'];
+    // console.log('mounted this.messageList', this.messageList);
+    // this.chat = this.Chat;
     if (this.chat.id !== null) {
       this.loadMessage();
       this.initOpen = true;
     }
   },
   watch: {
-    messageList: function(newList) {
-      const nextMessage = newList[newList.length - 1]
-      const isIncoming = (nextMessage || {}).author !== 'you'
-      if (isIncoming && this.toggledOpen) {
-        this.handleMessageResponseSound()
-      }
+    messageList: function() {
+      // const nextMessage = newList[newList.length - 1]
+      // const isIncoming = (nextMessage || {}).author !== 'you'
+      // if (isIncoming && this.toggledOpen) {
+      //   this.handleMessageResponseSound()
+      // }
     },
     chat: function(newVal) {
       console.log(this.chat , 'vs', newVal);
@@ -64,16 +66,18 @@ export default {
     async handleMessageReceived(message) {
       try {
         await this.SendMessage(message.body);
+        console.log('handleMessageReceived messageList', this.messageList);
+        console.log('handleMessageReceived Messages', this.Messages);
       } catch (err) {
         console.log(err);
         this.error = err.error
       }
-      this.messageList.push(message)
+      // this.messageList.push(message)
     },
     // Receive message from them (handled by you with your backend)
     handleMessageResponse(message) {
        if (message.length > 0) {
-            this.messageList.push({ body: message, author: 'them' })
+          this.messageList.push({ body: message, author: 'them' })
         }
     },
     // Chat toggled open event emitted

@@ -1,0 +1,17 @@
+.chat-dialog {
+
+}
+.chat-dialog .you {
+	background-color:  blue;
+	color:  white;
+	padding: 5px 8px;
+	text-align: left;
+	width: fit-content;
+}
+.chat-dialog .them {
+	background-color:  green;
+	padding: 5px 8px;
+	text-align: right;
+  width: fit-content;
+  float: right;
+}
