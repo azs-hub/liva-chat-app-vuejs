@@ -2,20 +2,13 @@ import axios from 'axios';
 import { adminHeader } from './authHeader';
 
 class AdminService {
-  getChatList() {
-    return axios.get('/chats', {headers: adminHeader() });
+  getChatList(page) {
+    console.log('AdminService - getChatList', page)
+    return axios.get('/chats/' + page , {headers: adminHeader() });
   }
 
-  getChat() {
-    // return axios.get(API_URL + 'user', { headers: authHeader() });
-  }
-
-  getModeratorBoard() {
-    // return axios.get(API_URL + 'mod', { headers: authHeader() });
-  }
-
-  getAdminBoard() {
-    // return axios.get(API_URL + 'admin', { headers: authHeader() });
+  getChatMessages(chat_id) {
+    return axios.get('/messages/' + chat_id, {headers: adminHeader() });
   }
 }
 

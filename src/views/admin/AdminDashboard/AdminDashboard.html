@@ -1,35 +1,26 @@
 
 <section class="admin-dashboard">
-  <div>
-    <b-table sticky-header hover
-      :items="chatList" 
-      :fields="fields"
-      ref="selectableTable"
-      select-mode="single"
-      selectable
-      @row-selected="myRowClickHandler">
-
-      <template #cell(username)="data">
-        {{ data.value }}
-      </template>
-
-       <template #cell(start_date)="data">
-        <b>{{ data.value | formatDate }}</b>
-      </template>
-
-       <template #cell(status)="data">
-        <b-icon-chat-fill 
-          :id="'tooltip-target-' + data.index"
-          v-bind:class="{ 'text-warning': data.value === 'waiting', 'text-success': data.value === 'defined', 'text-danger': data.value === 'closed' }">
-        </b-icon-chat-fill>
-        <b-tooltip :target="'tooltip-target-' + data.index" triggers="hover">
-          <b>{{ data.value }}</b>
-        </b-tooltip>
-
-      </template>
-    </b-table>
-
-    <ChatAdmin v-if="selectedChat" chatId="selectedChat" />
-  </div>
+  <b-container>
+    <b-row>
+      <b-col cols="4">
+        <b-list-group id="chatList">
+          <b-list-group-item
+            class="flex-column align-items-start"
+            button
+            @click="selectChat(msg.id)"
+            v-for="msg in chatList">
+              <small>{{ msg.start_date | formatDate }}</small>
+              <h5 class="mb-1">{{ msg.username }}</h5>
+          </b-list-group-item>
+        </b-list-group>
+      </b-col>
+      <b-col cols="8">
+        <ChatDialog 
+          v-if="selectedChat !== null"
+          :messagesList="messages"
+          @onMessageWasSent="handleMessageReceived"/>
+      </b-col>
+    </b-row>
+  </b-container>
 </section>
 

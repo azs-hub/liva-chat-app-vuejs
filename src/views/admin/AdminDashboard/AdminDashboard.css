@@ -1,3 +1,28 @@
 .admin-dashboard {
 
 }
+#chatList {
+	height: 400px;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+/* width */
+#chatList::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+#chatList::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+#chatList::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+#chatList::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

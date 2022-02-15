@@ -1,11 +1,25 @@
 <section class="nav-bar">
-  <span v-if="currentUser">
-    <router-link to="/admin/dashboard">Dashboard</router-link> | 
-    <a @click="logout">Logout</a>
-  </span>
-  <span v-if="!$route.path.includes('/admin/')">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </span>
+  <b-nav align="center">
+    <b-nav-item 
+      to="/admin/dashboard"
+      v-if="currentUser">
+        Dashboard
+    </b-nav-item>
+    <b-nav-item
+      @click="logout"
+      v-if="currentUser">
+        Logout
+    </b-nav-item>
+    <b-nav-item 
+      to="/"
+      v-if="!$route.path.includes('/admin/')">
+        Home
+    </b-nav-item>
+    <b-nav-item
+      to="/about"
+      v-if="!$route.path.includes('/admin/')">
+        About
+    </b-nav-item>
+  </b-nav>
 </section>
 

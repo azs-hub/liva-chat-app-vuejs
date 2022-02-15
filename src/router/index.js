@@ -28,7 +28,7 @@ const routes = [
     children: [
       { path: 'login', component: AdminLogin, name: 'adminLogin' },
       { path: 'dashboard', component: AdminDashboard, name: 'adminDashboard', },
-      { path: 'chat/:id', component: AdminChat, name: 'adminChat', props: true }
+      { path: 'chat/:chat_id', component: AdminChat, name: 'adminChat', props: true }
     ],
   },
 ]

@@ -2,7 +2,7 @@
 export default {
   name: 'chat-dialog',
   components: {},
-  props: ['messagesList'],
+  props: ['messagesList', 'onMessageWasSent'],
   data () {
     return {
       message: ''
@@ -12,15 +12,11 @@ export default {
 
   },
   mounted () {
-
   },
   methods: {
-    async sendMessage () {
-      this.messagesList.push({
-        content: this.message,
-        author: 'you'
-      })
-    }
+    sendMessage () {
+      this.$emit('onMessageWasSent', this.message);
+    },
   }
 }
 

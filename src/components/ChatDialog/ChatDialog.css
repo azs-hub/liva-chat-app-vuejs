@@ -1,17 +1,26 @@
 .chat-dialog {
-
+	background-color: #f5f7ff;
+	padding: 15px;
+	width: 100%;
+	height: 100%;
 }
+
 .chat-dialog .you {
-	background-color:  blue;
+	background-color: #0183ff;
 	color:  white;
-	padding: 5px 8px;
+	padding: 10px 18px;
+	border-radius: 15px 15px 15px 0%;
 	text-align: left;
 	width: fit-content;
 }
 .chat-dialog .them {
-	background-color:  green;
-	padding: 5px 8px;
+	background-color: #ebeefc;
+	padding: 10px 18px;
+	border-radius: 15px 15px 0% 15px;
 	text-align: right;
   width: fit-content;
   float: right;
+}
+.chat-dialog .messageList {
+	height: 80%;
 }
