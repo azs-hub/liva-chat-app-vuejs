@@ -1,21 +1,13 @@
 import AdminService from '@/api/admin.service';
-import ChatAdmin from '@/components/ChatAdmin/index.vue'
 import ChatDialog from '@/components/ChatDialog/index.vue'
 
 export default {
   name: 'admin-dashboard',
   components: {
-    ChatAdmin,
     ChatDialog
   },
-  props: [],
   data () {
     return {
-      fields: [
-        'username',
-        { key: 'start_date', label: 'Date' },
-        'status'
-      ],
       chatList: [],
       selectedChat: null,
       messages: [],
@@ -23,71 +15,62 @@ export default {
       loading: false
     }
   },
-  computed: {
-
-  },
   beforeMount() {
-    this.getInitialChats(this.page);
+    // Load the first part of the list of chats
+    this.getChatsPagination();
   },
   mounted () {
-    this.getNextChat();
+    // trigger on the scroll list to load more chats
+    this.getNextChats();
   },
   created () {
     
   },
   methods: {
-    myRowClickHandler(record) {
-      this.selectedChat = record[0].id;
-      this.$router.push('/admin/chat/' + record[0].id);
-    },
-    selectChat(record) {
-      this.selectedChat = record;
-      this.messages = [];
-      AdminService.getChatMessages(record).then(
-      chats => {
-        let allMsg = [];
-        chats.data.forEach(function (msg) {
-          allMsg.push({
-            content: msg.content,
-            author: (msg.sendby == 0) ? 'you' : 'them'
-          })
-        })
-        this.messages = [ ...this.messages, ...allMsg];
-      },
-      error => {
+    // Load the first part of the list of chats
+    async getChatsPagination() {
+      try {
+        this.loading = true;
+        // Get the list of chats
+        const chatsList = await AdminService.getChatList(this.page);
+          
+        this.page += 1;
+        this.chatList = [ ...this.chatList, ...chatsList.data];
+           
+      } catch (error) {
         console.log('error:', error);
-    });
-      // this.$router.push('/admin/chat/' + record[0].id);
+      } finally {
+        this.loading = false;
+      }
     },
-    getInitialChats(page) {
-      AdminService.getChatList(page).then(
-        chats => {
-          this.page += 1;
-          this.chatList = chats.data;
-        },
-        error => {
-          console.log('error:', error);
-      });
-    },
-    async getNextChat() {
-
+    // watch scroll on the list to load more chats
+    getNextChats() {
       document.getElementById("chatList").onscroll = () => {
         var scrollDiv = document.getElementById("chatList");
         if ( (scrollDiv.scrollTop + scrollDiv.offsetHeight) + 50 >= scrollDiv.scrollHeight && !this.loading) {
-          console.log('->', this.page);
-          this.loading = true;
-          AdminService.getChatList(this.page).then(
-            chats => {
-              this.page += 1;
-              this.chatList = [ ...this.chatList, ...chats.data];
-              console.log('--->', this.page);
-              this.loading = false;
-            },
-            error => {
-              console.log('error:', error);
-          });
+          this.getChatsPagination();
         }
       };
+    },
+    // return who is the author of the message
+    getAuthor(author) {
+      if (author == 0) 
+        return 'them';
+      return 'you';
+    },
+    // when a chat is selected
+    // get all the messages
+    async getMessagesChat(record) {
+      this.selectedChat = record;
+
+      try {
+        const chats = await AdminService.getChatMessages(record); 
+        this.messages = chats.data.map((msg) => {
+            return {content: msg.content, author: this.getAuthor(msg.sendby)}
+          });
+      } catch (error) {
+        console.log('error:', error);
+      }
     },
     handleMessageReceived(message) {
       this.messages.push({

@@ -8,8 +8,7 @@
 // Main Admin template
 export default {
   name: 'Admin',
-  components: {
-  },
+  components: {},
   data () {
     return {}
   },

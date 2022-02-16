@@ -7,10 +7,10 @@
           <b-list-group-item
             class="flex-column align-items-start"
             button
-            @click="selectChat(msg.id)"
-            v-for="msg in chatList">
-              <small>{{ msg.start_date | formatDate }}</small>
-              <h5 class="mb-1">{{ msg.username }}</h5>
+            @click="getMessagesChat(chat.id)"
+            v-for="chat in chatList">
+              <small>{{ chat.start_date | formatDate }}</small>
+              <h5 class="mb-1">{{ chat.username }}</h5>
           </b-list-group-item>
         </b-list-group>
       </b-col>

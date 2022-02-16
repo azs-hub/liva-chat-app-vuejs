@@ -7,42 +7,48 @@ export default {
   props: [],
   data () {
     return {
+      // use of a model to structure de form
       user: new User('', ''),
       loading: false,
-      message: ''
+      errorMsg: false
     }
   },
   computed: {
+    // TODO: Only called once, can be removed
     loggedIn() {
       return this.$store.state.auth.status.loggedIn;
     }
   },
   created() {
+    // If an user is already connected redirect to dashboard
     if (this.loggedIn) {
       this.$router.push({name:'adminDashboard'})
+      // TODO: explore router to set rules / restriction / redirect
     }
-    localStorage.name = 'anais';
-  },
-  mounted () {
-
   },
   methods: {
     ...mapActions(["login"]),
     async handleLogin() {
-      this.loading = true;
-      if (!this.user.username && !this.user.password) {
-        this.loading = false;
-        this.message = 'Username & password shall not be empty';
-      }
-      else {
-        try {
-          await this.login(this.user);
-          this.$router.push({name:'adminDashboard'})
-        } catch (err) {
-          console.log(err);
-          this.loading = false;
-          this.message = err.error
+      // TODO: VALIDATION FORM
+      try {
+        // before calling api check if login info are not empty
+        if (!this.user.username || !this.user.password) {
+          this.errorMsg = 'Username & password shall not be empty';
+          return;
         }
+
+        // Login start, block futur call from user
+        this.loading = true;
+        await this.login(this.user);
+        // user is connected, AuthService set the token
+        // we can redirect the user to the dashboard
+        this.$router.push({name:'adminDashboard'})
+      
+      } catch (err) {
+        this.errorMsg = err.error
+      
+      } finally {
+        this.loading = false;
       }
     }
   }

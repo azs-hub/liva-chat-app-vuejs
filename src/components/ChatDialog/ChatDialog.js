@@ -16,6 +16,7 @@ export default {
   methods: {
     sendMessage () {
       this.$emit('onMessageWasSent', this.message);
+      this.message = '';
     },
   }
 }

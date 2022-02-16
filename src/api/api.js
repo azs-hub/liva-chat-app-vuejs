@@ -1,15 +1,12 @@
 import axios from 'axios';
 
-// Send requests with credentials
-// axios.defaults.withCredentials = true,
-
+// Set AXIOS API
 axios.defaults.baseURL = 'http://localhost:3000/';
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
 // Middleware to redirect user if 404
 axios.interceptors.response.use(undefined, function (error) {
-	console.log('axios.interceptors');
 
   if (error) {
     const originalRequest = error.config;
