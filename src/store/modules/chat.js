@@ -1,17 +1,19 @@
+/*
+** VUEX GUEST CHAT
+** create chat and send messages
+*/
+
 import { CreateChatRoom } from '@/api/chat.api';
 import { PostMessage, GetChatMessages } from '@/api/message.api';
+import Message from '@/models/message'
+import Chat from '@/models/chat'
 
-// default data value
+// default data value for a guest user
+// Chat & Session data
 const state = {
 	session: false,
-	chat: {
-		id: null,
-		username: null,
-		start_date: null,
-		end_date: null,
-		is_closed: null,
-	},
-	messages: new Array()
+	chat: new Chat(),
+	messages: []
 };
 
 // Get localdata
@@ -24,34 +26,35 @@ const getters = {
 // API call
 const actions = {
 
+	// Create a chat 
+	// and store auth token and chat info
 	async ConnectUser({commit}, name) {
 		try {
-      const newChat = await CreateChatRoom({username: name});
-      commit('setChat', newChat.data);
-      commit('setSession', newChat.data.token);
+      const { data } = await CreateChatRoom({username: name});
+      commit('setChat', data);
+      commit('setSession', data.token);
     } catch (err) {
       console.log(err);
       return err;
     }
 	},
+
 	async SendMessage({state, commit}, msg) {
 		try {
-			const message = { 
-				content: msg,
-				sendby: 0,
-				chat_id: state.chat.id
-			};
-      const newMsg = await PostMessage(message);
-      commit('addMessage', newMsg.data);
+			let newmsg = new Message(msg, 0);
+			newmsg = {...newmsg, chat_id: state.chat.id}
+      const { data } = await PostMessage(newmsg);
+      commit('addMessage', data);
     } catch (err) {
       console.log(err);
       return err;
     }
 	},
+	
 	async GetAllMessages({state, commit}) {
 		try {
-      const allMsg = await GetChatMessages(state.chat.id);
-      commit('setMessage', allMsg.data);
+      const { data } = await GetChatMessages(state.chat.id);
+      commit('setMessage', data);
     } catch (err) {
       console.log(err);
       return err;
@@ -69,14 +72,14 @@ const mutations = {
 		state.session = token
 	},
 	setMessage(state, allMsg){
-		state.messages = new Array();
-		allMsg.forEach(function (msg) {
-			state.messages.push({body: msg.content, author: (msg.sendby == 0) ? 'you' : 'them'})
-		})
+		state.messages = allMsg.map((msg) => {
+			return new Message(msg.content, msg.sendby);
+    });
 	},
 	addMessage(state, msg){
-		state.messages.push({body: msg.content, author: (msg.sendby == 0) ? 'you' : 'them'})
-	}
+		const newMsg = new Message(msg.content, msg.sendby);
+		state.messages = [...state.messages, newMsg];
+	},
 
 };
 

@@ -1,52 +1,41 @@
+/*
+** CHAT COMPONENT
+** Usage of the ext. comp vue-chat-widget
+** Show a popup dialog - Msg from guest to admin
+** 
+** TODO: Create own dialog component
+*/
+
 import { mapGetters, mapActions } from "vuex"
-import {Chat} from 'vue-chat-widget'
+import { Chat } from 'vue-chat-widget'
 
 export default {
   name: 'chat-live',
   components: {
     Chat
   },
-  props: [],
   data () {
     return {
-      // messageList: [],
       initOpen: false,
       toggledOpen: false,
-      // chat: {
-      //   username: null,
-      //   id: null,
-      //   start_date: null,
-      //   status: null,
-      // }
     }
   },
   computed: {
+    // chat & messages are given/linked by the vuex
     ...mapGetters({chat: "StateChat", messageList: "StateMessages"}),
   },
   mounted () {
-    // this.messageList = this.Messages;
-    // this.messageList = this.$store.getters['StateMessages'];
-    // console.log('mounted this.messageList', this.messageList);
-    // this.chat = this.Chat;
-    if (this.chat.id !== null) {
+    // get the messages if a chat is already connected
+    if (this.chat.id) {
       this.loadMessage();
       this.initOpen = true;
     }
   },
-  watch: {
-    messageList: function() {
-      // const nextMessage = newList[newList.length - 1]
-      // const isIncoming = (nextMessage || {}).author !== 'you'
-      // if (isIncoming && this.toggledOpen) {
-      //   this.handleMessageResponseSound()
-      // }
-    },
-    chat: function(newVal) {
-      console.log(this.chat , 'vs', newVal);
-    }
-  },
   methods: {
     ...mapActions(["ConnectUser", "SendMessage", "GetAllMessages"]),
+    
+    // Load message through the vuex
+    // To have them stored
     async loadMessage() {
       try {
         await this.GetAllMessages();
@@ -55,6 +44,8 @@ export default {
         this.error = err.error
       }
     },
+    
+    // Connect to the chat
     async createChat() {
       try {
         await this.ConnectUser(this.chat.username);
@@ -63,34 +54,30 @@ export default {
         this.error = err.error
       }
     },
+
+    // Send message through the vuex
+    // And have them stored
     async handleMessageReceived(message) {
       try {
         await this.SendMessage(message.body);
-        console.log('handleMessageReceived messageList', this.messageList);
-        console.log('handleMessageReceived Messages', this.Messages);
       } catch (err) {
         console.log(err);
         this.error = err.error
       }
-      // this.messageList.push(message)
     },
-    // Receive message from them (handled by you with your backend)
+    
+    // Receive message from them 
+    // TODO: socket.io
     handleMessageResponse(message) {
        if (message.length > 0) {
           this.messageList.push({ body: message, author: 'them' })
         }
     },
+    
     // Chat toggled open event emitted
     handleToggleOpen(open) {
       this.toggledOpen = open
-      // connect/disconnect websocket or something
-    },
-    // Audible chat response noise, use whatever noise you want
-    handleMessageResponseSound() {
-      // const audio = new Audio(incomingMessageSound)
-      // audio.addEventListener('loadeddata', () => {
-      //   audio.play()
-      // })
+      // TODO: connect/disconnect websocket or something
     },
 
   }

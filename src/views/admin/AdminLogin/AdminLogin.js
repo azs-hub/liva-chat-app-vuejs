@@ -7,18 +7,18 @@ export default {
   props: [],
   data () {
     return {
-      // use of a model to structure de form
       user: new User('', ''),
       loading: false,
       errorMsg: false
     }
   },
+  
   computed: {
-    // TODO: Only called once, can be removed
     loggedIn() {
       return this.$store.state.auth.status.loggedIn;
     }
   },
+  
   created() {
     // If an user is already connected redirect to dashboard
     if (this.loggedIn) {
@@ -26,9 +26,11 @@ export default {
       // TODO: explore router to set rules / restriction / redirect
     }
   },
+  
   methods: {
     ...mapActions(["login"]),
     async handleLogin() {
+  
       // TODO: VALIDATION FORM
       try {
         // before calling api check if login info are not empty
@@ -36,7 +38,6 @@ export default {
           this.errorMsg = 'Username & password shall not be empty';
           return;
         }
-
         // Login start, block futur call from user
         this.loading = true;
         await this.login(this.user);

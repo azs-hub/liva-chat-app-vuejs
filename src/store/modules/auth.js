@@ -1,12 +1,18 @@
+/*
+** VUEX AUTH ADMIN
+** Manage admin authentication
+*/
+
 import AuthService from '@/api/auth.service';
+import User from '@/models/user'
 
 const user = JSON.parse(localStorage.getItem('user'));
 
 const state = {
   status: { 
-    loggedIn: (user) ? true : false 
+    loggedIn: !!user
   },
-  user: (user) ? user : null
+  user: user
 };
 
 const getters = {
@@ -15,40 +21,35 @@ const getters = {
 };
 
 const actions = {
-  login({ commit }, user) {
-    return AuthService.login(user).then(
-      user => {
-        commit('loginSuccess', user.data);
-        return Promise.resolve(user.data);
-      },
-      error => {
-        commit('loginFailure');
-        return Promise.reject(error);
-      }
-    );
+  async login({ commit }, user) {
+    try {
+      const { data } = await AuthService.login(user);
+      commit('loginSuccess', data);
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   },
   logout({ commit }) {
     AuthService.logout();
     commit('logout');
   },
-  register({ commit }, user) {
-    return AuthService.register(user).then(
-      response => {
-        commit('registerSuccess');
-        return Promise.resolve(response.data);
-      },
-      error => {
-        commit('registerFailure');
-        return Promise.reject(error);
-      }
-    );
+  async register({ commit }, user) {
+    try {
+      await AuthService.register(user);
+      commit('registerSuccess');
+    } catch (err) {
+      console.log(err);
+      commit('registerFailure');
+      return err;
+    }
   }
 };
 
 const mutations = {
   loginSuccess(state, user) {
     state.status.loggedIn = true;
-    state.user = user;
+    state.user = new User(user);
   },
   loginFailure(state) {
     state.status.loggedIn = false;

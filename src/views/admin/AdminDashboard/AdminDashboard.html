@@ -18,7 +18,7 @@
         <ChatDialog 
           v-if="selectedChat !== null"
           :messagesList="messages"
-          @onMessageWasSent="handleMessageReceived"/>
+          @onMessageWasSent="sendMessage"/>
       </b-col>
     </b-row>
   </b-container>
