@@ -5,7 +5,6 @@ import About from '../views/About.vue'
 import AdminPage from '@/views/Admin.vue'
 import AdminLogin from '../views/admin/AdminLogin/index.vue'
 import AdminDashboard from '../views/admin/AdminDashboard/index.vue'
-import AdminChat from '../views/admin/AdminChat/index.vue'
 
 Vue.use(VueRouter)
 
@@ -27,8 +26,7 @@ const routes = [
     component: AdminPage,
     children: [
       { path: 'login', component: AdminLogin, name: 'adminLogin' },
-      { path: 'dashboard', component: AdminDashboard, name: 'adminDashboard', },
-      { path: 'chat/:chat_id', component: AdminChat, name: 'adminChat', props: true }
+      { path: 'dashboard', component: AdminDashboard, name: 'adminDashboard', }
     ],
   },
 ]

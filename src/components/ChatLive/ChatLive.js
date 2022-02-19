@@ -9,6 +9,8 @@
 import { mapGetters, mapActions } from "vuex"
 import { Chat } from 'vue-chat-widget'
 
+import io from 'socket.io-client';
+
 export default {
   name: 'chat-live',
   components: {
@@ -18,6 +20,13 @@ export default {
     return {
       initOpen: false,
       toggledOpen: false,
+      socket : io('localhost:3000', {
+        withCredentials: false,
+        extraHeaders: {
+          "Content-Type": "application/json",
+          "Access-Contol-Allow-Origin": "*",
+        }
+      })
     }
   },
   computed: {
@@ -29,7 +38,27 @@ export default {
     if (this.chat.id) {
       this.loadMessage();
       this.initOpen = true;
+      
+      this.socket.emit('join server', this.chat.username);
+
+      this.socket.emit('join room', this.chat.id, (msg, room) => {
+        console.log('FR[socket join room]', msg, room);
+      });
+
     }
+
+    // new chat had been created
+    // update chatist
+    this.socket.on('new user', allUsers => {
+      console.log('FR[socket.on new user]', allUsers);
+    });
+    this.socket.on('new msg', newMsg => {
+      console.log('FR[socket.on new msg', newMsg);
+      this.messageList.push({
+        body: newMsg.content,
+        author: 'them'
+      });
+    });
   },
   methods: {
     ...mapActions(["ConnectUser", "SendMessage", "GetAllMessages"]),
@@ -49,6 +78,11 @@ export default {
     async createChat() {
       try {
         await this.ConnectUser(this.chat.username);
+        this.socket.emit('join server', this.chat.username);
+
+        this.socket.emit('join room', this.chat.id, (msg, room) => {
+          console.log('FR[socket join room]', msg, room);
+        });
       } catch (err) {
         console.log(err);
         this.error = err.error
@@ -60,6 +94,14 @@ export default {
     async handleMessageReceived(message) {
       try {
         await this.SendMessage(message.body);
+        
+        this.socket.emit('send msg', {
+          content: message.body,
+          to: this.chat.id,
+          chatName: this.chat.id,
+          sender: this.chat.id,
+          isChannel: false
+        });
       } catch (err) {
         console.log(err);
         this.error = err.error

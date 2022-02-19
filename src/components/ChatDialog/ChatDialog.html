@@ -6,7 +6,7 @@
       <p v-bind:class="msg.author">{{ msg.content }}</p>
     </b-col>
   </b-row>
-  <b-row align-v="end">
+  <b-row align-v="end" class="messageForm">
     <b-col>
       <form @submit.prevent="sendMessage">
         <b-form-textarea
