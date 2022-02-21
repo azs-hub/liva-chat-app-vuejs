@@ -22,7 +22,7 @@
 	text-align: left;
 	width: fit-content;
 }
-.chat-dialog .messageList {
+.chat-dialog #messageList {
 	height: 80%;
 	overflow-y: scroll;
 }

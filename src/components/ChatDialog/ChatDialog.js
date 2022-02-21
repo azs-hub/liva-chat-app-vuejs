@@ -8,8 +8,9 @@ export default {
       message: ''
     }
   },
-  computed: {
-
+  updated() {
+      // whenever data changes and the component re-renders, this is called.
+      this.$nextTick(() => this.scrollToEnd());
   },
   mounted () {
   },
@@ -18,6 +19,11 @@ export default {
       this.$emit('onMessageWasSent', this.message);
       this.message = '';
     },
+
+    scrollToEnd(){
+      var element = this.$refs.messageList;
+      element.scrollTop = element.scrollHeight;
+  }
   }
 }
 

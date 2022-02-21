@@ -5,6 +5,10 @@ import About from '../views/About.vue'
 import AdminPage from '@/views/Admin.vue'
 import AdminLogin from '../views/admin/AdminLogin/index.vue'
 import AdminDashboard from '../views/admin/AdminDashboard/index.vue'
+import AdminChatList from '../views/admin/AdminChatList/index.vue'
+
+
+import { Role } from '../models/role'
 
 Vue.use(VueRouter)
 
@@ -25,8 +29,20 @@ const routes = [
     name: 'Admin',
     component: AdminPage,
     children: [
-      { path: 'login', component: AdminLogin, name: 'adminLogin' },
-      { path: 'dashboard', component: AdminDashboard, name: 'adminDashboard', }
+      { path: 'login',
+        name: 'adminLogin',
+        component: AdminLogin
+      },
+      { path: 'dashboard',
+        component: AdminDashboard,
+        name: 'adminDashboard',
+        meta: { authorize: [Role.Manager, Role.Admin] } 
+      },
+      { path: 'chatList',
+        component: AdminChatList,
+        name: 'adminChatList',
+        meta: { authorize: [Role.Admin] } 
+      }
     ],
   },
 ]
@@ -36,16 +52,19 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ['/admin/login', '/', '/about'];
-  const authRequired = !publicPages.includes(to.path);
-  const loggedIn = localStorage.getItem('user');
+  const currentUser = JSON.parse(localStorage.getItem('user'));
+  const { authorize } = to.meta;
 
-  // trying to access a restricted page + not logged in
-  // redirect to login page
-  if (authRequired && !loggedIn) {
-    next('/admin/login');
-  } else {
-    next();
+  if (authorize) {
+    if (!currentUser) {
+        // not logged in so redirect to login page with the return url
+        return next('/admin/login');
+    }
+    // check if route is restricted by role
+    if (authorize.length && !authorize.includes(currentUser.role)) {
+        // role not authorised so redirect to home page
+        return next({ path: '/' });
+    }
   }
   next();
 })

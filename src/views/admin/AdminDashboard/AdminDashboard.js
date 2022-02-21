@@ -1,3 +1,4 @@
+import { mapGetters } from "vuex"
 import AdminService from '@/api/admin.service';
 import ChatDialog from '@/components/ChatDialog/index.vue'
 import Message from '@/models/message'
@@ -22,12 +23,16 @@ export default {
           "Content-Type": "application/json",
           "Access-Contol-Allow-Origin": "*",
         }
-      })
+      }),
+      onlineUsers: []
     }
+  },
+  computed: {
+    ...mapGetters({user: "StateUser"})
   },
   
   beforeMount() {
-    // Load the first part of the list of chats
+    // Load the first items in the list of chats
     this.getChatsPagination();
   },
   
@@ -35,15 +40,16 @@ export default {
     // trigger on the scroll list to load more chats
     this.getNextChats();
 
-    this.socket.emit('join server', 'anais');
-    // new chat had been created
+    this.socket.emit('join server', this.user);
+    // new chat had been created by a guest
     // update chatist
     this.socket.on('new user', allUsers => {
-      console.log('[socket.on new user', allUsers);
+      console.log('socket.on new user is', allUsers);
+      this.onlineUsers = allUsers.filter((x) => x.userid != this.user.id);
     });
     this.socket.on('new msg', newMsg => {
-      console.log('[socket.on new msg', newMsg);
-      if (newMsg.sender == this.selectedChat)
+      console.log('[socket.on new msg]', newMsg);
+      if (newMsg.to == this.selectedChat.id)
         this.messages = [...this.messages, new Message(newMsg.content, 'them')];
     });
   },
@@ -84,10 +90,10 @@ export default {
       }
 
       this.selectedChat = record;
-      this.socket.emit('join room', record);
+      this.socket.emit('join room', record.id);
 
       try {
-        const { data: messages } = await AdminService.getChatMessages(record); 
+        const { data: messages } = await AdminService.getChatMessages(record.id); 
         
         this.messages = messages.map((msg) => {
           return new Message(msg.content, !msg.sendby);
@@ -100,21 +106,15 @@ export default {
     
     // TODO: use service to send a message
     async sendMessage(content) {
-      console.log('sendMessage to chatId', this.selectedChat)
-
       try {
         let newmsg = new Message(content, 1);
-        newmsg = {...newmsg, chat_id: this.selectedChat}
-        const { data } = await AdminService.postChatMessage(newmsg);
-        this.messages.push(new Message(data.content, 0));
-
-        // this.socket.emit('SEND_MESSAGE', newmsg);
+        newmsg = {...newmsg, chat_id: this.selectedChat.id}
+        await AdminService.postChatMessage(newmsg);
+        this.messages.push(new Message(content, 0));
+        
         this.socket.emit('send msg', {
           content: content,
-          to: this.selectedChat,
-          chatName: this.selectedChat,
-          sender: 1,
-          isChannel: false
+          to: this.selectedChat.id
         });
       } catch (err) {
         console.log(err);
@@ -122,6 +122,25 @@ export default {
       }
 
     },
+
+    isOnline(user) {
+      return this.onlineUsers.some((chat) => {
+        return user.id == chat.userid;
+      })
+    },
+
+    getOnlineClass(user) {
+      if (this.isOnline(user))
+        return 'success';
+      return 'default';
+    },
+
+    scrollIntoView(id) {
+      var el = this.$refs['chat'+id];
+      if (el) {
+        this.$refs.chatList.scrollTop = el[0].offsetTop;
+      }
+    }
   }
 }
 

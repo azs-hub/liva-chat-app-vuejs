@@ -3,20 +3,40 @@
   <b-container>
     <b-row>
       <b-col cols="4">
-        <b-list-group id="chatList">
+        <h3>Current chat</h3>
+      </b-col>
+      <b-col cols="8">
+        <b-navbar v-if="selectedChat">
+          <b-navbar-brand @click="scrollIntoView(selectedChat.id)">Chat with: {{ selectedChat.username }}</b-navbar-brand>
+          <b-navbar-nav class="ml-auto">
+            <b-nav-item align="right" v-b-popover.hover="'Is it over?'">End chat</b-nav-item>
+          </b-navbar-nav>
+        </b-navbar>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col cols="4">
+        <b-list-group id="chatList" ref="chatList">
           <b-list-group-item
             class="flex-column align-items-start"
             button
-            @click="getMessagesChat(chat.id)"
-            v-for="chat in chatList">
+            @click="getMessagesChat(chat)"
+            v-for="chat in chatList"
+            :variant="getOnlineClass(chat)"
+            :active="selectedChat && selectedChat.id == chat.id"
+            :ref="'chat' + chat.id">
+              <h5>{{ chat.username }}</h5>
               <small>{{ chat.start_date | formatDate }}</small>
-              <h5 class="mb-1">{{ chat.username }}</h5>
           </b-list-group-item>
         </b-list-group>
       </b-col>
       <b-col cols="8">
+        <div v-if="!selectedChat">
+          <h3>Please click on a chat to start helping the users.</h3>
+          <h5>When the issue is solve don't forget to close the chat</h5>
+        </div>
         <ChatDialog 
-          v-if="selectedChat !== null"
+          v-if="selectedChat"
           :messagesList="messages"
           @onMessageWasSent="sendMessage"/>
       </b-col>

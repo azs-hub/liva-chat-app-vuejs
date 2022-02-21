@@ -34,31 +34,14 @@ export default {
     ...mapGetters({chat: "StateChat", messageList: "StateMessages"}),
   },
   mounted () {
-    // get the messages if a chat is already connected
+    // If a chat is already set
+    // Connect to the socket and load the message
     if (this.chat.id) {
       this.loadMessage();
       this.initOpen = true;
-      
-      this.socket.emit('join server', this.chat.username);
-
-      this.socket.emit('join room', this.chat.id, (msg, room) => {
-        console.log('FR[socket join room]', msg, room);
-      });
-
+      this.joinSocket();
+      this.handleMessageResponse();
     }
-
-    // new chat had been created
-    // update chatist
-    this.socket.on('new user', allUsers => {
-      console.log('FR[socket.on new user]', allUsers);
-    });
-    this.socket.on('new msg', newMsg => {
-      console.log('FR[socket.on new msg', newMsg);
-      this.messageList.push({
-        body: newMsg.content,
-        author: 'them'
-      });
-    });
   },
   methods: {
     ...mapActions(["ConnectUser", "SendMessage", "GetAllMessages"]),
@@ -73,16 +56,21 @@ export default {
         this.error = err.error
       }
     },
+
+    // Connect to the socket and handle message
+    joinSocket() {
+      // To put in a function and recall
+      this.socket.emit('join server', this.chat);
+      this.socket.emit('join room', this.chat.id, (msg, room) => {
+        console.log('FR[socket join room]', msg, room);
+      });
+    },
     
     // Connect to the chat
     async createChat() {
       try {
         await this.ConnectUser(this.chat.username);
-        this.socket.emit('join server', this.chat.username);
-
-        this.socket.emit('join room', this.chat.id, (msg, room) => {
-          console.log('FR[socket join room]', msg, room);
-        });
+        this.joinSocket();
       } catch (err) {
         console.log(err);
         this.error = err.error
@@ -94,13 +82,10 @@ export default {
     async handleMessageReceived(message) {
       try {
         await this.SendMessage(message.body);
-        
+        console.log('handleMessageReceived', message, this.chat)
         this.socket.emit('send msg', {
           content: message.body,
-          to: this.chat.id,
-          chatName: this.chat.id,
-          sender: this.chat.id,
-          isChannel: false
+          to: this.chat.id
         });
       } catch (err) {
         console.log(err);
@@ -109,11 +94,14 @@ export default {
     },
     
     // Receive message from them 
-    // TODO: socket.io
-    handleMessageResponse(message) {
-       if (message.length > 0) {
-          this.messageList.push({ body: message, author: 'them' })
-        }
+    handleMessageResponse() {
+      this.socket.on('new msg', newMsg => {
+        console.log('FR[socket.on new msg]', newMsg);
+        this.messageList.push({
+          body: newMsg.content,
+          author: 'them'
+        });
+      });
     },
     
     // Chat toggled open event emitted

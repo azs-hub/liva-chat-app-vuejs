@@ -5,6 +5,11 @@
       v-if="currentUser">
         Dashboard
     </b-nav-item>
+    <b-nav-item 
+      to="/admin/chatList"
+      v-if="showAdminBoard">
+        Chat List
+    </b-nav-item>
     <b-nav-item
       @click="logout"
       v-if="currentUser">

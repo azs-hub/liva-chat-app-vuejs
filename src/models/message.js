@@ -1,4 +1,5 @@
 // sentBy-Author: 0=guest - 1=admin
+// 
 
 export default class Message {
   constructor(content, author) {

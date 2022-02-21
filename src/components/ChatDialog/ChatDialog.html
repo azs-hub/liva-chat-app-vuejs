@@ -1,6 +1,6 @@
 
 <section class="chat-dialog">
-  <b-row class="messageList"
+  <b-row id="messageList" ref="messageList"
     align-v="start">
     <b-col cols="12" v-for="msg in messagesList">
       <p v-bind:class="msg.author">{{ msg.content }}</p>
@@ -9,14 +9,18 @@
   <b-row align-v="end" class="messageForm">
     <b-col>
       <form @submit.prevent="sendMessage">
-        <b-form-textarea
-          id="textarea"
-          v-model="message"
-          placeholder="Enter something..."
-          rows="3"
-          max-rows="6"
-        ></b-form-textarea>
-        <input type="submit" value="send">
+        <b-input-group>
+          <b-form-textarea
+            id="textarea"
+            v-model="message"
+            placeholder="Enter something..."
+            rows="3"
+            max-rows="6"
+          ></b-form-textarea>
+          <b-input-group-append>
+            <b-button variant="info" type="submit">SEND</b-button>
+          </b-input-group-append>
+        </b-input-group>
       </form>
     </b-col>
   </b-row>
