@@ -41,12 +41,14 @@ export default {
     this.getNextChats();
 
     this.socket.emit('join server', this.user);
+    
     // new chat had been created by a guest
     // update chatist
     this.socket.on('new user', allUsers => {
       console.log('socket.on new user is', allUsers);
       this.onlineUsers = allUsers.filter((x) => x.userid != this.user.id);
     });
+    
     this.socket.on('new msg', newMsg => {
       console.log('[socket.on new msg]', newMsg);
       if (newMsg.to == this.selectedChat.id)
@@ -60,10 +62,10 @@ export default {
       try {
         this.loading = true;
         // Get the list of chats
-        const newChatList = await AdminService.getChatList(this.page);
+        const { data } = await AdminService.getChatList(this.page);
           
         this.page += 1;
-        this.chatList = [ ...this.chatList, ...newChatList.data];
+        this.chatList = [ ...this.chatList, ...data];
            
       } catch (error) {
         console.log('error:', error);
@@ -104,7 +106,6 @@ export default {
       }
     },
     
-    // TODO: use service to send a message
     async sendMessage(content) {
       try {
         let newmsg = new Message(content, 1);

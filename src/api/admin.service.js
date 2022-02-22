@@ -5,6 +5,9 @@ class AdminService {
   getChatList(page) {    return axios.get('/chats/' + page , {headers: adminHeader() });
   }
 
+  getAllChatList(page) {    return axios.get('/chats/allChats/' + page , {headers: adminHeader() });
+  }
+
   getChatMessages(chat_id) {
     return axios.get('/messages/' + chat_id, {headers: adminHeader() });
   }
